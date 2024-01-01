@@ -1,0 +1,11 @@
+{
+  "name": "tibber2sheet",
+  "version": "1.0.0",
+  "description": "",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "tibber-api": "^5.1.9"
+  }
+}
