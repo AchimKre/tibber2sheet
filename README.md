@@ -18,7 +18,7 @@ Check the node installation:
 ```
 git clone https://github.com/AchimKre/tibber2sheet.git
 ```
-# set build and config
+# build and set config
 ```
 PATH=/opt/node/node-v20.10.0-linux-armv6l/bin:$PATH
 cd tibber2sheet
