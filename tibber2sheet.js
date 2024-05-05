@@ -35,37 +35,51 @@ const config = {
     lastMeterProduction: true,
 };
 
-// Instantiate TibberFeed.
-const tibberQuery = new TibberQuery(config);
-const tibberFeed = new TibberFeed(tibberQuery, 1000, false, 1000);
+async function run() {
 
-// Subscribe to "data" event.
-let sendData = false;
-tibberFeed.on('data', (data) => {
-    console.log(data);
-    if (!sendData) {
-        submitForm(data);
-    } else {
+    // Instantiate TibberFeed.
+    const tibberQuery = new TibberQuery(config);
+    const tibberFeed = new TibberFeed(tibberQuery, 1000, false, 1000);
+
+    // Subscribe to "data" event.
+    let firstSend = false;
+    tibberFeed.on('data', (data) => {
+        console.log(data);
+        if (!firstSend) {
+            firstSend = true;
+            submitForm(data);
+        }   
+    });
+
+    // Connect to Tibber data feed
+    tibberFeed.connect();
+
+    setTimeout(() => {
+        // set retry after 2 minutes
+        firstSend = false;
+      }, "" + (2*60*1000));
+
+      setTimeout(() => {
+        // kill after after 5 minutes
         process.exit();
-    }
-});
+      }, "" + (5*60*1000));
 
-// Connect to Tibber data feed
-tibberFeed.connect();
-
-function submitForm(data) {
-    (async() => {
-        try {
-            const params = new URLSearchParams();
-            params.append(`${GOOGLE_FROM_ENTRY_LAST_METER_CONSUMPTION}`, data.lastMeterConsumption);
-            params.append(`${GOOGLE_FROM_ENTRY_LAST_METER_PRODUCTION}`, data.lastMeterProduction);
-
-            const post = await fetch(`${GOOGLE_FORM_URL}`, {method: 'POST', body: params});
-            const text = await post.text();
-            console.log("post.status", post.status);
-            sendData = true;
-        } catch (err) {
-            console.log(err.message); //can be console.error
-        }
-    })();
 }
+async function submitForm(data) {
+    try {
+        const params = new URLSearchParams();
+        params.append(`${GOOGLE_FROM_ENTRY_LAST_METER_CONSUMPTION}`, data.lastMeterConsumption);
+        params.append(`${GOOGLE_FROM_ENTRY_LAST_METER_PRODUCTION}`, data.lastMeterProduction);
+
+        const post = await fetch(`${GOOGLE_FORM_URL}`, {method: 'POST', body: params});
+        const text = await post.text();
+        console.log("post.status", post.status);
+        process.exit();
+    } catch (err) {
+        console.log(err.message); //can be console.error
+    }
+}
+
+(async() => {
+    run();
+})()
