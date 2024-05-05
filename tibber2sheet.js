@@ -46,8 +46,8 @@ tibberFeed.on('data', (data) => {
     if (!sendData) {
         submitForm(data);
         sendData = true;
-        process.exit()
     }
+    process.exit();
 });
 
 // Connect to Tibber data feed
