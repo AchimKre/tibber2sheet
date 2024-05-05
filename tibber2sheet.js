@@ -40,10 +40,14 @@ const tibberQuery = new TibberQuery(config);
 const tibberFeed = new TibberFeed(tibberQuery, 1000, false, 1000);
 
 // Subscribe to "data" event.
+let sendData = false;
 tibberFeed.on('data', (data) => {
     console.log(data);
-    submitForm(data);
-    tibberFeed.close();
+    if (!sendData) {
+        submitForm(data);
+        sendData = true;
+        process.exit()
+    }
 });
 
 // Connect to Tibber data feed
