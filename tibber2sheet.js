@@ -45,9 +45,9 @@ tibberFeed.on('data', (data) => {
     console.log(data);
     if (!sendData) {
         submitForm(data);
-        sendData = true;
+    } else {
+        process.exit();
     }
-    process.exit();
 });
 
 // Connect to Tibber data feed
@@ -63,6 +63,7 @@ function submitForm(data) {
             const post = await fetch(`${GOOGLE_FORM_URL}`, {method: 'POST', body: params});
             const text = await post.text();
             console.log("post.status", post.status);
+            sendData = true;
         } catch (err) {
             console.log(err.message); //can be console.error
         }
